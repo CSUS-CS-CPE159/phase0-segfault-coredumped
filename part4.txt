@@ -1,0 +1,1810 @@
+-[spede] ~ 
+13:39:00 $ git config --global user.name Nick Janota
+-[spede] ~ 
+13:39:28 $ git config --global user.email w1868444@apps.losrios.edu
+-[spede] ~ 
+13:40:28 $ git config --list
+user.name=Nick
+user.email=w1868444@apps.losrios.edu
+-[spede] ~ 
+13:41:01 $ ssh-keygen -t ed25519 -C $(git config --get user.email)
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/spede/.ssh/id_ed25519): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/spede/.ssh/id_ed25519
+Your public key has been saved in /home/spede/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256://o+7MStg4t4KcJ1ikuwb9RddmHjrhDJP+iRMwg6YsM w1868444@apps.losrios.edu
+The key's randomart image is:
++--[ED25519 256]--+
+|                 |
+|            +    |
+|       . . o o   |
+|    .   + o o    |
+|. .. o oSB o     |
+|.Eoo. + X.o...   |
+|..o+.o + *.=o .  |
+|   o= o.+.oo+.   |
+|   .oo.o. o**o   |
++----[SHA256]-----+
+-[spede] ~ 
+13:43:02 $ cat ~/.ssh/id_ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEwR3pv3oxh2sA6ld1171o+Xe7gCdMRg/dAFa6tE+aR w1868444@apps.losrios.edu
+-[spede] ~ 
+13:46:17 $ ^C
+![spede] ~ 
+13:46:22 $ ssh -T git@github.com
+The authenticity of host 'github.com (140.82.116.3)' can't be established.
+ECDSA key fingerprint is SHA256:p2QAMXNIC1TJYWeIOttrVc98/R1BUFWu3/LiyKgUfQM.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'github.com,140.82.116.3' (ECDSA) to the list of known hosts.
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+Hi segfault-coredumped! You've successfully authenticated, but GitHub does not provide shell access.
+![spede] ~ 
+13:48:50 $ git clone git@github.com:CSUS-CS-CPE159/phase0-segfault-coredumped.git
+Cloning into 'phase0-segfault-coredumped'...
+Warning: Permanently added the ECDSA host key for IP address '140.82.116.4' to the list of known hosts.
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 10 (delta 0), reused 8 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (10/10), done.
+-[spede] ~ 
+13:54:38 $ cd 01-hello-world
+bash: cd: 01-hello-world: No such file or directory
+![spede] ~ 
+13:55:43 $ ls
+bin  Desktop  Documents  Downloads  phase0-segfault-coredumped	Pictures
+-[spede] ~ 
+13:56:26 $ cd phase0-segfault-coredumped
+-[spede] ~/phase0-segfault-coredumped (main=)
+13:56:44 $ ls
+01-hello-world	02-debugging  README.md
+-[spede] ~/phase0-segfault-coredumped (main=)
+13:56:47 $ cd 01-hello-world
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+13:57:01 $ ls
+Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+13:57:11 $ vi Makefile
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+14:01:12 $ vi Makefile
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:01:56 $ cat Makefile
+#------------------------------------------------------------------------------
+# CPE/CSC 159 SPEDE3 Project Makefile
+# California State University, Sacramento
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# (1) Name your operating system.  Must be a legal filename, and not contain
+#     spaces or punctuation.  It will be used to name you DLI file.
+#
+#     Can be overridden via an environment variable, such as:
+#        OS_NAME=SpedeOS make
+#------------------------------------------------------------------------------
+OS_NAME ?= NicksOS
+
+#------------------------------------------------------------------------------
+# (2) Specify additional compiler or linker flags.
+#     EXTRA_CFLAGS          Additional flags to pass to the compiler
+#     EXTRA_LDFLAGS         Additional flags to pass to the linker
+#------------------------------------------------------------------------------
+EXTRA_CFLAGS = -Wall \
+			   -Werror \
+			   -Wclobbered \
+			   -Wnull-dereference \
+			   -Wold-style-declaration \
+			   -Wsign-compare \
+			   -Wtype-limits \
+			   -Wuninitialized \
+			   -Wunused-but-set-parameter \
+			   -fdelete-null-pointer-checks
+
+EXTRA_LDFLAGS =
+
+#==============================================================================
+# Do not modify below
+#==============================================================================
+
+#------------------------------------------------------------------------------
+# General definitions
+#------------------------------------------------------------------------------
+
+SPEDE_ROOT ?= /opt/spede
+
+# DLI filename
+DLI = $(OS_NAME).dli
+
+# Global paths
+BUILD_DIR=build
+SRC_DIR=src
+INC = -Iinclude -I$(SRC_DIR) -I$(SPEDE_ROOT)/include/
+
+# Compilers
+CC := $(SPEDE_ROOT)/bin/i386-elf-gcc
+AS := $(SPEDE_ROOT)/bin/i386-elf-as
+AR := $(SPEDE_ROOT)/bin/i386-elf-ar
+NM := $(SPEDE_ROOT)/bin/i386-elf-nm
+
+# Object utilities
+OBJ_COPY  := $(SPEDE_ROOT)/bin/i386-elf-objcopy
+OBJ_STRIP := $(SPEDE_ROOT)/bin/i386-elf-strip
+OBJ_DUMP  := $(SPEDE_ROOT)/bin/i386-elf-objdump
+
+# Build utilities
+CMD_LINKER = $(SPEDE_ROOT)/bin/linkdli
+CMD_DELETE = rm -rf
+
+# Files to be removed when a 'clean' is performed
+CLEAN_FILES = $(BUILD_DIR)
+
+# Compiler flags
+ASFLAGS +=
+CFLAGS  += -g -m32 -nostartfiles -nostdlib -ffreestanding -lc -DOS_NAME=\"$(OS_NAME)\" $(EXTRA_CFLAGS)
+LDFLAGS += -g $(EXTRA_LDFLAGS)
+
+src_to_bin_dir = $(patsubst $(SRC_DIR)%,$(BUILD_DIR)%,$1)
+
+sources  = $(wildcard src/*/*.c) $(wildcard src/*.c) $(wildcard src/*.S)
+objects  = $(call src_to_bin_dir,$(addsuffix .o,$(basename $(sources))))
+depends  = $(patsubst %.o,%.d,$(objects))
+
+#------------------------------------------------------------------------------
+# Make targets
+#------------------------------------------------------------------------------
+.PHONY: $(OS_NAME) all clean debug run strip text help
+
+all: $(DLI)
+$(OS_NAME): $(DLI)
+
+$(DLI): $(objects)
+	@$(CMD_LINKER) $(LDFLAGS) -o $(BUILD_DIR)/$(DLI) $(objects)
+
+clean:
+	@echo "Removing compiled objects and images"
+	@$(CMD_DELETE) $(CLEAN_FILES)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S
+	@mkdir -p $(@D)
+	@$(CC) -DASSEMBLER $(CFLAGS) $(INC) -c -o $@ $<
+
+run: $(DLI)
+	@spede-run $(BUILD_DIR)/$(DLI)
+
+debug: $(DLI)
+	@spede-run -d $(BUILD_DIR)/$(DLI)
+
+strip: $(DLI)
+	@$(OBJ_STRIP) $(BUILD_DIR)/$(DLI)
+	@echo "Stripped debug symbols from $(BUILD_DIR)/$(DLI)"
+
+text: $(DLI)
+	@$(OBJ_DUMP) --disassemble --file-headers --reloc --source $(BUILD_DIR)/$(DLI) > $(BUILD_DIR)/$(DLI).asm
+	@echo "Image disassembly into $(DLI).asm done"
+
+tags:
+	@ctags -R --languages=C,C++,ASM -f .tags
+
+help:
+	@echo "This Makefile builds $(DLI)."
+	@echo "  make all       -- Builds an operating system image"
+	@echo "  make clean     -- Remove all compiled objects and images"
+	@echo "  make run       -- Runs the operating system image"
+	@echo "  make debug		-- Runs the operating system image with GDB"
+	@echo "  make strip     -- Builds an image with no debug symbols included"
+	@echo "  make text      -- Generate annotated assembly source for the operating system image"
+	@echo "  make tag       -- Generate ctags file"
+	@echo ""
+
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:02:02 $ ls
+Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:02:37 $ cd src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:17 $ ls
+hello.c
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:19 $ cat hello.c
+#include <spede/stdio.h>
+
+void main(void) {
+
+    printf("Hello, world!\n");
+    printf("Welcome to %s!\n", OS_NAME);
+}
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:36 $ cd phase0-HornetSys/01-hello-world/
+bash: cd: phase0-HornetSys/01-hello-world/: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:04:13 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:04:17 $ $ make
+$: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:04:54 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:05:05 $ ls build/NicksOS.dli 
+build/NicksOS.dli
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:05:55 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:06:05 $ cd build
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:06:46 $ ls
+hello.o  NicksOS.dli
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:06:48 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:07:13 $ spede-target -q
+The SPEDE Target has quit. Exiting...
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:04 $ make run
+make: *** No rule to make target 'run'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:35 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:50 $ make ru
+make: *** No rule to make target 'ru'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:10:10 $ make run
+make: *** No rule to make target 'run'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:10:41 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:11:05 $ sped-target -q
+sped-target: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:11:32 $ spede-target -q
+The SPEDE Target is not running
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:12:08 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:12:45 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:13:36 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:13:37 $ spede-run
+Image 'build/MyOS.dli' cannot be found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:15:33 $ cd..
+cd..: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:15:54 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:16:16 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:16:59 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:17:00 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:17:51 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:17:53 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:18:02 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:18:07 $ spede-run
+The SPEDE Target does not appear to be running.
+Ensure that you have started the SPEDE Target.
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:21:31 $ spede-run
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:21:58 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ -q
+Undefined command: "-q".  Try "help".
+SPEDE GDB$ q
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:23:49 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) 
+Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:39 $ y
+y: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:41 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:42 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:26:21 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:29:11 $ ls
+build  Makefile  part3.txt  spede.sock	src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:29:15 $ rm part3.txt
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:31:12 $ ls
+build  Makefile  spede.sock  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:31:14 $ cd ..
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:31:16 $ ls
+01-hello-world	02-debugging  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:31:18 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:32:00 $ ls
+01-hello-world	02-debugging  part3.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:32:01 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:32:46 $ ls
+01-hello-world	02-debugging  part3.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:32:48 $ vi part4.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:33:32 $ ls
+01-hello-world	02-debugging  part3.txt  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:33:34 $ vi part3
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:33:45 $ ls
+01-hello-world	02-debugging  part3.txt  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:33:46 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:34:06 $ rm part3.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:35:30 $ ls
+01-hello-world	02-debugging  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:35:31 $ spede-target -q
+The SPEDE Target is not running
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:35:56 $ spede-run -d
+Image 'build/MyOS.dli' cannot be found
+![spede] ~/phase0-segfault-coredumped {main *%=}
+14:36:13 $ cd ~/phase0-segfault-coredumped/01-hello-world/
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:36:59 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:06 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:10 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:15 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:23 $ spede-run
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:33 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:35 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:53 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:37:57 $ spede-run
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:00 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:07 $ cd build
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:38:09 $ ls
+hello.o  NicksOS.dli
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:38:10 $ spede-run -d
+Image 'build/MyOS.dli' cannot be found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:38:22 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:48 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:55 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:40:17 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:41:22 $ ls
+build  Makefile  part3.txt  spede.sock	src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:41:24 $ rm part3.txt
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:41:49 $ cd ..
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:41:54 $ ls
+01-hello-world	02-debugging  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:41:55 $ vi part3.txt
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:42:32 $ ls
+01-hello-world	02-debugging  part3.txt  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:42:34 $ cat part3.txr
+cat: part3.txr: No such file or directory
+![spede] ~/phase0-segfault-coredumped {main *%=}
+14:42:46 $ cat part3.txt
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:38:22 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:48 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:38:55 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:40:17 $ spede-run -d
+
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:42:52 $ cat part4.txt
+-[spede] ~ 
+13:39:00 $ git config --global user.name Nick Janota
+-[spede] ~ 
+13:39:28 $ git config --global user.email w1868444@apps.losrios.edu
+-[spede] ~ 
+13:40:28 $ git config --list
+user.name=Nick
+user.email=w1868444@apps.losrios.edu
+-[spede] ~ 
+13:41:01 $ ssh-keygen -t ed25519 -C $(git config --get user.email)
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/spede/.ssh/id_ed25519): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/spede/.ssh/id_ed25519
+Your public key has been saved in /home/spede/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256://o+7MStg4t4KcJ1ikuwb9RddmHjrhDJP+iRMwg6YsM w1868444@apps.losrios.edu
+The key's randomart image is:
++--[ED25519 256]--+
+|                 |
+|            +    |
+|       . . o o   |
+|    .   + o o    |
+|. .. o oSB o     |
+|.Eoo. + X.o...   |
+|..o+.o + *.=o .  |
+|   o= o.+.oo+.   |
+|   .oo.o. o**o   |
++----[SHA256]-----+
+-[spede] ~ 
+13:43:02 $ cat ~/.ssh/id_ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEwR3pv3oxh2sA6ld1171o+Xe7gCdMRg/dAFa6tE+aR w1868444@apps.losrios.edu
+-[spede] ~ 
+13:46:17 $ ^C
+![spede] ~ 
+13:46:22 $ ssh -T git@github.com
+The authenticity of host 'github.com (140.82.116.3)' can't be established.
+ECDSA key fingerprint is SHA256:p2QAMXNIC1TJYWeIOttrVc98/R1BUFWu3/LiyKgUfQM.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'github.com,140.82.116.3' (ECDSA) to the list of known hosts.
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+Hi segfault-coredumped! You've successfully authenticated, but GitHub does not provide shell access.
+![spede] ~ 
+13:48:50 $ git clone git@github.com:CSUS-CS-CPE159/phase0-segfault-coredumped.git
+Cloning into 'phase0-segfault-coredumped'...
+Warning: Permanently added the ECDSA host key for IP address '140.82.116.4' to the list of known hosts.
+Enter passphrase for key '/home/spede/.ssh/id_ed25519': 
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 10 (delta 0), reused 8 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (10/10), done.
+-[spede] ~ 
+13:54:38 $ cd 01-hello-world
+bash: cd: 01-hello-world: No such file or directory
+![spede] ~ 
+13:55:43 $ ls
+bin  Desktop  Documents  Downloads  phase0-segfault-coredumped	Pictures
+-[spede] ~ 
+13:56:26 $ cd phase0-segfault-coredumped
+-[spede] ~/phase0-segfault-coredumped (main=)
+13:56:44 $ ls
+01-hello-world	02-debugging  README.md
+-[spede] ~/phase0-segfault-coredumped (main=)
+13:56:47 $ cd 01-hello-world
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+13:57:01 $ ls
+Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+13:57:11 $ vi Makefile
+-[spede] ~/phase0-segfault-coredumped/01-hello-world (main=)
+14:01:12 $ vi Makefile
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:01:56 $ cat Makefile
+#------------------------------------------------------------------------------
+# CPE/CSC 159 SPEDE3 Project Makefile
+# California State University, Sacramento
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# (1) Name your operating system.  Must be a legal filename, and not contain
+#     spaces or punctuation.  It will be used to name you DLI file.
+#
+#     Can be overridden via an environment variable, such as:
+#        OS_NAME=SpedeOS make
+#------------------------------------------------------------------------------
+OS_NAME ?= NicksOS
+
+#------------------------------------------------------------------------------
+# (2) Specify additional compiler or linker flags.
+#     EXTRA_CFLAGS          Additional flags to pass to the compiler
+#     EXTRA_LDFLAGS         Additional flags to pass to the linker
+#------------------------------------------------------------------------------
+EXTRA_CFLAGS = -Wall \
+			   -Werror \
+			   -Wclobbered \
+			   -Wnull-dereference \
+			   -Wold-style-declaration \
+			   -Wsign-compare \
+			   -Wtype-limits \
+			   -Wuninitialized \
+			   -Wunused-but-set-parameter \
+			   -fdelete-null-pointer-checks
+
+EXTRA_LDFLAGS =
+
+#==============================================================================
+# Do not modify below
+#==============================================================================
+
+#------------------------------------------------------------------------------
+# General definitions
+#------------------------------------------------------------------------------
+
+SPEDE_ROOT ?= /opt/spede
+
+# DLI filename
+DLI = $(OS_NAME).dli
+
+# Global paths
+BUILD_DIR=build
+SRC_DIR=src
+INC = -Iinclude -I$(SRC_DIR) -I$(SPEDE_ROOT)/include/
+
+# Compilers
+CC := $(SPEDE_ROOT)/bin/i386-elf-gcc
+AS := $(SPEDE_ROOT)/bin/i386-elf-as
+AR := $(SPEDE_ROOT)/bin/i386-elf-ar
+NM := $(SPEDE_ROOT)/bin/i386-elf-nm
+
+# Object utilities
+OBJ_COPY  := $(SPEDE_ROOT)/bin/i386-elf-objcopy
+OBJ_STRIP := $(SPEDE_ROOT)/bin/i386-elf-strip
+OBJ_DUMP  := $(SPEDE_ROOT)/bin/i386-elf-objdump
+
+# Build utilities
+CMD_LINKER = $(SPEDE_ROOT)/bin/linkdli
+CMD_DELETE = rm -rf
+
+# Files to be removed when a 'clean' is performed
+CLEAN_FILES = $(BUILD_DIR)
+
+# Compiler flags
+ASFLAGS +=
+CFLAGS  += -g -m32 -nostartfiles -nostdlib -ffreestanding -lc -DOS_NAME=\"$(OS_NAME)\" $(EXTRA_CFLAGS)
+LDFLAGS += -g $(EXTRA_LDFLAGS)
+
+src_to_bin_dir = $(patsubst $(SRC_DIR)%,$(BUILD_DIR)%,$1)
+
+sources  = $(wildcard src/*/*.c) $(wildcard src/*.c) $(wildcard src/*.S)
+objects  = $(call src_to_bin_dir,$(addsuffix .o,$(basename $(sources))))
+depends  = $(patsubst %.o,%.d,$(objects))
+
+#------------------------------------------------------------------------------
+# Make targets
+#------------------------------------------------------------------------------
+.PHONY: $(OS_NAME) all clean debug run strip text help
+
+all: $(DLI)
+$(OS_NAME): $(DLI)
+
+$(DLI): $(objects)
+	@$(CMD_LINKER) $(LDFLAGS) -o $(BUILD_DIR)/$(DLI) $(objects)
+
+clean:
+	@echo "Removing compiled objects and images"
+	@$(CMD_DELETE) $(CLEAN_FILES)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S
+	@mkdir -p $(@D)
+	@$(CC) -DASSEMBLER $(CFLAGS) $(INC) -c -o $@ $<
+
+run: $(DLI)
+	@spede-run $(BUILD_DIR)/$(DLI)
+
+debug: $(DLI)
+	@spede-run -d $(BUILD_DIR)/$(DLI)
+
+strip: $(DLI)
+	@$(OBJ_STRIP) $(BUILD_DIR)/$(DLI)
+	@echo "Stripped debug symbols from $(BUILD_DIR)/$(DLI)"
+
+text: $(DLI)
+	@$(OBJ_DUMP) --disassemble --file-headers --reloc --source $(BUILD_DIR)/$(DLI) > $(BUILD_DIR)/$(DLI).asm
+	@echo "Image disassembly into $(DLI).asm done"
+
+tags:
+	@ctags -R --languages=C,C++,ASM -f .tags
+
+help:
+	@echo "This Makefile builds $(DLI)."
+	@echo "  make all       -- Builds an operating system image"
+	@echo "  make clean     -- Remove all compiled objects and images"
+	@echo "  make run       -- Runs the operating system image"
+	@echo "  make debug		-- Runs the operating system image with GDB"
+	@echo "  make strip     -- Builds an image with no debug symbols included"
+	@echo "  make text      -- Generate annotated assembly source for the operating system image"
+	@echo "  make tag       -- Generate ctags file"
+	@echo ""
+
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:02:02 $ ls
+Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:02:37 $ cd src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:17 $ ls
+hello.c
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:19 $ cat hello.c
+#include <spede/stdio.h>
+
+void main(void) {
+
+    printf("Hello, world!\n");
+    printf("Welcome to %s!\n", OS_NAME);
+}
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:03:36 $ cd phase0-HornetSys/01-hello-world/
+bash: cd: phase0-HornetSys/01-hello-world/: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/src {main *=}
+14:04:13 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:04:17 $ $ make
+$: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *=}
+14:04:54 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:05:05 $ ls build/NicksOS.dli 
+build/NicksOS.dli
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:05:55 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:06:05 $ cd build
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:06:46 $ ls
+hello.o  NicksOS.dli
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:06:48 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:07:13 $ spede-target -q
+The SPEDE Target has quit. Exiting...
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:04 $ make run
+make: *** No rule to make target 'run'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:35 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:09:50 $ make ru
+make: *** No rule to make target 'ru'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:10:10 $ make run
+make: *** No rule to make target 'run'.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:10:41 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:11:05 $ sped-target -q
+sped-target: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:11:32 $ spede-target -q
+The SPEDE Target is not running
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:12:08 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:12:45 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:13:36 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:13:37 $ spede-run
+Image 'build/MyOS.dli' cannot be found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:15:33 $ cd..
+cd..: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:15:54 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:16:16 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:16:59 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:17:00 $ cd ...
+bash: cd: ...: No such file or directory
+![spede] ~/phase0-segfault-coredumped/01-hello-world/build {main *%=}
+14:17:51 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:17:53 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:18:02 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:18:07 $ spede-run
+The SPEDE Target does not appear to be running.
+Ensure that you have started the SPEDE Target.
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:21:31 $ spede-run
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:21:58 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ -q
+Undefined command: "-q".  Try "help".
+SPEDE GDB$ q
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:23:49 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) 
+Exiting...
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:39 $ y
+y: command not found
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:41 $ 
+![spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:24:42 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/NicksOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x8a  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2216 bytes/sec)
+Executing the image 'build/NicksOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/NicksOS.dli...
+Expanding full symbols from build/NicksOS.dli...
+Remote debugging using /dev/pts/1
+0x0010255d in breakpoint ()
+Temporary breakpoint 1 at 0x101183: file src/hello.c, line 5.
+
+Temporary breakpoint 1, main () at src/hello.c:5
+5	    printf("Hello, world!\n");
+SPEDE GDB$ run
+Hello, world!
+Welcome to NicksOS!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/01-hello-world {main *%=}
+14:26:21 $ spede-run -d
+
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:43:03 $ lss
+
+Command 'lss' not found, did you mean:
+
+  command 'ss' from deb iproute2 (5.5.0-1ubuntu1)
+  command 'ass' from deb irpas (0.10-7)
+  command 'lsc' from deb livescript (1.6.0+dfsg-1)
+  command 'les' from deb atm-tools (1:2.5.1-4)
+  command 'gss' from deb libgss-dev (1.0.3-4)
+  command 'lsns' from deb util-linux (2.34-0.1ubuntu9.3)
+  command 'lsm' from deb lsm (1.0.4-1)
+  command 'less' from deb less (551-1ubuntu0.1)
+  command 'lvs' from deb lvm2 (2.03.07-1ubuntu1)
+  command 'lsh' from deb lsh-client (2.1-12build3)
+  command 'lssu' from deb nilfs-tools (2.2.8-1)
+  command 'lrs' from deb lrslib (0.70-3)
+  command 'lsw' from deb suckless-tools (44-1)
+  command 'ls' from deb coreutils (8.30-3ubuntu2)
+
+Try: sudo apt install <deb name>
+
+![spede] ~/phase0-segfault-coredumped {main *%=}
+14:43:34 $ ls
+01-hello-world	02-debugging  part3.txt  part4.txt  README.md
+-[spede] ~/phase0-segfault-coredumped {main *%=}
+14:43:44 $ cd 02-debugging/
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:44:38 $ ls
+Makefile  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:44:40 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:44:47 $ ls
+main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:44:48 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:53:28 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:53:41 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:53:50 $ make
+src/main.c: In function 'strlen':
+src/main.c:13:28: error: missing terminating ' character [-Werror]
+   13 |     while (str[counter] != '0\') {
+      |                            ^
+src/main.c:13:28: error: missing terminating ' character
+   13 |     while (str[counter] != '0\') {
+      |                            ^~~~~~~
+src/main.c:14:17: error: operation on 'counter' may be undefined [-Werror=sequence-point]
+   14 |         counter ++;
+      |         ~~~~~~~~^~
+src/main.c:14:19: error: expected ')' before ';' token
+   14 |         counter ++;
+      |                   ^
+      |                   )
+src/main.c:13:11: note: to match this '('
+   13 |     while (str[counter] != '0\') {
+      |           ^
+src/main.c:15:5: error: expected expression before '}' token
+   15 |     }
+      |     ^
+src/main.c: At top level:
+src/main.c:16:5: error: expected identifier or '(' before 'return'
+   16 |     return counter;
+      |     ^~~~~~
+src/main.c:17:1: error: expected identifier or '(' before '}' token
+   17 | }
+      | ^
+src/main.c: In function 'strlen':
+src/main.c:15:5: error: control reaches end of non-void function [-Werror=return-type]
+   15 |     }
+      |     ^
+cc1: all warnings being treated as errors
+make: *** [Makefile:97: build/main.o] Error 1
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:54:05 $ ls
+build  Makefile  spede.sock  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:54:34 $ cd build
+-[spede] ~/phase0-segfault-coredumped/02-debugging/build {main *%=}
+14:54:39 $ ls
+-[spede] ~/phase0-segfault-coredumped/02-debugging/build {main *%=}
+14:54:41 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:54:45 $ ls
+build  Makefile  spede.sock  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:54:47 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:54:51 $ ls
+main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:54:53 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+14:58:23 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:58:30 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:58:50 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:59:14 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+14:59:29 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2404 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 40.
+
+Temporary breakpoint 1, main () at src/main.c:40
+40	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ break puts
+Breakpoint 2 at 0x10119d: file src/main.c, line 24.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:24
+SPEDE GDB$ continue
+The program is not being run.
+SPEDE GDB$ c
+The program is not being run.
+SPEDE GDB$ c
+The program is not being run.
+SPEDE GDB$ 
+The program is not being run.
+SPEDE GDB$ quitt
+Undefined command: "quitt".  Try "help".
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:05:13 $ spede-quit
+spede-quit: command not found
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:05:44 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:05:57 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:06:04 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 40.
+
+Temporary breakpoint 1, main () at src/main.c:40
+40	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ break puts
+Breakpoint 2 at 0x10119d: file src/main.c, line 24.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:24
+SPEDE GDB$ c
+The program is not being run.
+SPEDE GDB$ continue
+The program is not being run.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:08:31 $ vi main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:08:47 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:08:49 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:08:52 $ vi main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:09:41 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:09:55 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:10:01 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:10:05 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ break puts
+Breakpoint 2 at 0x10119d: file src/main.c, line 22.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+SPEDE GDB$ c
+The program is not being run.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:12:18 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:12:36 $ ls
+main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:12:38 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:14:52 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:15:03 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:15:09 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:15:15 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:15:17 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:15:23 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:15:58 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:16:08 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:17:22 $ ls
+build  Makefile  spede.sock  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:17:26 $ vi Makefile
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:18:27 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:18:40 $ make
+Done linking "build/NicksOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:18:47 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ cc
+Undefined command: "cc".  Try "help".
+SPEDE GDB$ c
+The program is not being run.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:20:17 $ ls
+build  Makefile  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:20:23 $ vim Makefile
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:21:07 $ vim Makefile
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:21:33 $ vim Makefile
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:22:26 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:23:11 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:23:15 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+The buffer size is 17 bytes
+NULL pointer!
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ break puts
+Breakpoint 2 at 0x10119d: file src/main.c, line 22.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+SPEDE GDB$ continue
+The program is not being run.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:25:44 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ break puts
+Breakpoint 2 at 0x10119d: file src/main.c, line 22.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+SPEDE GDB$ 
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+SPEDE GDB$ 
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+SPEDE GDB$ continue
+Continuing.
+Hello, world!
+Welcome to MyOS!
+
+Breakpoint 2, puts (str=0x10422f "Hello, World!\n") at src/main.c:22
+22	    if (str) {
+SPEDE GDB$ list
+17	/**
+18	 * Prints a string to the screen starting at 0, 0
+19	 * @param str pointer to the string to print
+20	 */
+21	void puts(char *str) {
+22	    if (str) {
+23	        printf("NULL pointer!\n");
+24	        return;
+25	    }
+26	
+SPEDE GDB$ print str
+$1 = 0x10422f "Hello, World!\n"
+SPEDE GDB$ step
+23	        printf("NULL pointer!\n");
+SPEDE GDB$ step
+NULL pointer!
+24	        return;
+SPEDE GDB$ continue
+Continuing.
+The buffer size is 17 bytes
+
+Breakpoint 2, puts (str=0x10dfc "welcome to MyOS!\n") at src/main.c:22
+22	    if (str) {
+SPEDE GDB$ jump +3
+Continuing at 0x1011b5.
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ break strlen
+Breakpoint 3 at 0x101178: file src/main.c, line 10.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x0010119d in puts 
+                                           at src/main.c:22
+	breakpoint already hit 2 times
+3       breakpoint     keep y   0x00101178 in strlen 
+                                           at src/main.c:10
+SPEDE GDB$ continue
+The program is not being run.
+SPEDE GDB$ backtrace
+No stack.
+SPEDE GDB$ spede-run -d
+Undefined command: "spede-run".  Try "help".
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:35:31 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ break strlen
+Breakpoint 2 at 0x101178: file src/main.c, line 10.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x00101178 in strlen at src/main.c:10
+SPEDE GDB$ break strlen
+Note: breakpoint 2 also set at pc 0x101178.
+Breakpoint 3 at 0x101178: file src/main.c, line 10.
+SPEDE GDB$ continue
+Continuing.
+Hello, world!
+Welcome to MyOS!
+NULL pointer!
+
+Breakpoint 2, strlen (str=0x10dfc "welcome to MyOS!\n") at src/main.c:10
+10	    int counter = 0;
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:36:50 $ ls
+build  Makefile  spede.sock  src
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:37:00 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:37:03 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:38:20 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:38:32 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:38:50 $ make
+make: *** No targets specified and no makefile found.  Stop.
+![spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:38:57 $ cd  ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:39:19 $ make
+src/main.c: In function 'puts':
+src/main.c:22:9: error: suggest parentheses around assignment used as truth value [-Werror=parentheses]
+   22 |     if (str = NULL) {
+      |         ^~~
+cc1: all warnings being treated as errors
+make: *** [Makefile:97: build/main.o] Error 1
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:39:30 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:39:51 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:40:43 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:40:49 $ make
+src/main.c: In function 'puts':
+src/main.c:22:9: error: suggest parentheses around assignment used as truth value [-Werror=parentheses]
+   22 |     if ((str) = NULL) {
+      |         ^
+cc1: all warnings being treated as errors
+make: *** [Makefile:97: build/main.o] Error 1
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:40:51 $ cd src
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:41:15 $ vim main.c
+-[spede] ~/phase0-segfault-coredumped/02-debugging/src {main *%=}
+15:41:30 $ cd ..
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:41:33 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:41:35 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:41:43 $ spede-run -d
+Socket './spede.sock' does not exist. Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:42:23 $ spede-target
+Launching SPEDE target to run in the background
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:42:30 $ make
+Done linking "build/MyOS.dli" (with GDB enabled) at 1m.
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:42:37 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ list
+33	
+34	/**
+35	 * Main function
+36	 */
+37	void main(void) {
+38	    char buf[128] = {0};
+39	    int year = 1970;
+40	
+41	    *((char *) 0xB8000) = 'A';
+42	
+SPEDE GDB$ break strlen
+Breakpoint 2 at 0x101178: file src/main.c, line 10.
+SPEDE GDB$ c
+Continuing.
+Hello, world!
+Welcome to MyOS!
+
+Breakpoint 2, strlen (str=0x10422f "Hello, World!\n") at src/main.c:10
+10	    int counter = 0;
+SPEDE GDB$ c
+Continuing.
+
+Breakpoint 2, strlen (str=0x10dfc "welcome to MyOS!\n") at src/main.c:10
+10	    int counter = 0;
+SPEDE GDB$ backtrace
+#0  strlen (str=0x10dfc "welcome to MyOS!\n") at src/main.c:10
+#1  0x00101297 in main () at src/main.c:49
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x00101178 in strlen at src/main.c:10
+	breakpoint already hit 2 times
+SPEDE GDB$ delete 2
+SPEDE GDB$ info break
+No breakpoints or watchpoints.
+SPEDE GDB$ break puts
+Breakpoint 3 at 0x10119d: file src/main.c, line 22.
+SPEDE GDB$ break printf
+Breakpoint 4 at 0x103675
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+4       breakpoint     keep y   0x00103675 <printf+9>
+SPEDE GDB$ continue
+Continuing.
+
+Breakpoint 4, 0x00103675 in printf (fmt=0x10424e "The buffer size is %d bytes\n")
+SPEDE GDB$ c
+Continuing.
+The buffer size is 17 bytes
+
+Breakpoint 3, puts (str=0x10dfc "welcome to MyOS!\n") at src/main.c:22
+22	    if ((str) == NULL) {
+SPEDE GDB$ c
+Continuing.
+
+Breakpoint 4, 0x00103675 in printf (fmt=0x10426c "CPE/CSC 159 for Spring/Fall %d will be fun!\n")
+SPEDE GDB$ c
+Continuing.
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep y   0x0010119d in puts at src/main.c:22
+	breakpoint already hit 1 time
+4       breakpoint     keep y   0x00103675 <printf+9>
+	breakpoint already hit 2 times
+SPEDE GDB$ delete 3
+SPEDE GDB$ delete 4
+SPEDE GDB$ info break
+No breakpoints or watchpoints.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:53:07 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2404 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ break main
+Breakpoint 2 at 0x101208: file src/main.c, line 38.
+SPEDE GDB$ next
+39	    int year = 1970;
+SPEDE GDB$ next
+41	    *((char *) 0xB8000) = 'A';
+SPEDE GDB$ next
+43	    printf("Hello, world!\n");
+SPEDE GDB$ next
+Hello, world!
+44	    printf("Welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+Welcome to MyOS!
+46	    puts("Hello, World!\n");
+SPEDE GDB$ break
+Breakpoint 3 at 0x10125a: file src/main.c, line 46.
+SPEDE GDB$ next
+48	    snprintf(buf, sizeof(buf), "welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+49	    printf("The buffer size is %d bytes\n", strlen(buf));
+SPEDE GDB$ next
+The buffer size is 17 bytes
+50	    puts(buf);
+SPEDE GDB$ next
+52	    printf("CPE/CSC 159 for Spring/Fall %d will be fun!\n", year);
+SPEDE GDB$ break
+Breakpoint 4 at 0x1012bd: file src/main.c, line 52.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x00101208 in main at src/main.c:38
+3       breakpoint     keep y   0x0010125a src/main.c:46
+4       breakpoint     keep y   0x001012bd src/main.c:52
+SPEDE GDB$ delete 2
+SPEDE GDB$ delete 3
+SPEDE GDB$ delete 4
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:56:26 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) yy
+Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:56:33 $ 
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+15:56:34 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2104 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ break main
+Breakpoint 2 at 0x101208: file src/main.c, line 38.
+SPEDE GDB$ next
+39	    int year = 1970;
+SPEDE GDB$ next
+41	    *((char *) 0xB8000) = 'A';
+SPEDE GDB$ next
+43	    printf("Hello, world!\n");
+SPEDE GDB$ next
+Hello, world!
+44	    printf("Welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+Welcome to MyOS!
+46	    puts("Hello, World!\n");
+SPEDE GDB$ next
+48	    snprintf(buf, sizeof(buf), "welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+49	    printf("The buffer size is %d bytes\n", strlen(buf));
+SPEDE GDB$ next
+The buffer size is 17 bytes
+50	    puts(buf);
+SPEDE GDB$ break
+Breakpoint 3 at 0x1012ab: file src/main.c, line 50.
+SPEDE GDB$ next
+52	    printf("CPE/CSC 159 for Spring/Fall %d will be fun!\n", year);
+SPEDE GDB$ break
+Breakpoint 4 at 0x1012bd: file src/main.c, line 52.
+SPEDE GDB$ print buf
+$1 = "welcome to MyOS!\n", '\000' <repeats 110 times>
+SPEDE GDB$ set buf[0] = 'W'
+SPEDE GDB$ print buf
+$2 = "Welcome to MyOS!\n", '\000' <repeats 110 times>
+SPEDE GDB$ continue
+Continuing.
+CPE/CSC 159 for Spring/Fall 1970 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ print year
+No symbol "year" in current context.
+SPEDE GDB$ print /d year
+No symbol "year" in current context.
+SPEDE GDB$ quit
+-[spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+16:01:31 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) 
+Exiting...
+![spede] ~/phase0-segfault-coredumped/02-debugging {main *%=}
+16:01:50 $ spede-run -d
+The SPEDE Target will be reset, are you sure? (y/n) y
+Resetting the SPEDE Target...
+Downloading image 'build/MyOS.dli' to SPEDE Target via /dev/pts/1...
+File type is 'ELF'
+Total blocks to download:  0x83  (128 bytes each)
+
+Load Successful ; Code loaded at 0x0x101000 (2404 bytes/sec)
+Executing the image 'build/MyOS.dli' on the SPEDE Target with GDB Enabled
+Launching GDB...
+Reading symbols from build/MyOS.dli...
+Expanding full symbols from build/MyOS.dli...
+Remote debugging using /dev/pts/1
+0x00102685 in breakpoint ()
+Temporary breakpoint 1 at 0x101208: file src/main.c, line 38.
+
+Temporary breakpoint 1, main () at src/main.c:38
+38	    char buf[128] = {0};
+SPEDE GDB$ info break
+No breakpoints or watchpoints.
+SPEDE GDB$ break main
+Breakpoint 2 at 0x101208: file src/main.c, line 38.
+SPEDE GDB$ next
+39	    int year = 1970;
+SPEDE GDB$ next
+41	    *((char *) 0xB8000) = 'A';
+SPEDE GDB$ next\
+next
+Undefined command: "nextnext".  Try "help".
+SPEDE GDB$ nextnext
+Undefined command: "nextnext".  Try "help".
+SPEDE GDB$ next
+43	    printf("Hello, world!\n");
+SPEDE GDB$ next
+Hello, world!
+44	    printf("Welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+Welcome to MyOS!
+46	    puts("Hello, World!\n");
+SPEDE GDB$ next
+48	    snprintf(buf, sizeof(buf), "welcome to %s!\n", OS_NAME);
+SPEDE GDB$ next
+49	    printf("The buffer size is %d bytes\n", strlen(buf));
+SPEDE GDB$ next
+The buffer size is 17 bytes
+50	    puts(buf);
+SPEDE GDB$ next
+52	    printf("CPE/CSC 159 for Spring/Fall %d will be fun!\n", year);
+SPEDE GDB$ break printf("Cprintf("CPE/CSC 159 for Spring/Fall %d will be fun!\n", year)
+Function "printf("CPE/CSC 159 for Spring/Fall %d will be fun!\n", year)" not defined.
+SPEDE GDB$ info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x00101208 in main at src/main.c:38
+SPEDE GDB$ break file src/main.c, line 52
+Function "file src/main.c" not defined.
+SPEDE GDB$ break src/main.c, line 52
+Function "src/main.c" not defined.
+SPEDE GDB$ break main.c, line 52
+Function "main.c" not defined.
+SPEDE GDB$ break line 52
+Function "line 52" not defined.
+SPEDE GDB$ break 52
+Breakpoint 3 at 0x1012bd: file src/main.c, line 52.
+SPEDE GDB$ print year
+$1 = 0x7b2
+SPEDE GDB$ print /d year
+$2 = 1970
+SPEDE GDB$ set year=2025
+SPEDE GDB$ print /d year
+$3 = 8229
+SPEDE GDB$ print year
+$4 = 0x2025
+SPEDE GDB$ set year=2025.
+SPEDE GDB$ print /d year
+$5 = 2025
+SPEDE GDB$ continue
+Continuing.
+CPE/CSC 159 for Spring/Fall 2025 will be fun!
+[Inferior 1 (Remote target) exited normally]
+SPEDE GDB$ 
+
