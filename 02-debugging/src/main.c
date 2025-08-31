@@ -7,6 +7,7 @@
  */
 int strlen(char *str) {
     //Implement me!
+    // testing git on vscode with VM
     int counter = 0;
     while (str[counter] != '\0') {
         counter ++;
