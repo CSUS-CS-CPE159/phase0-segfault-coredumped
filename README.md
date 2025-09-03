@@ -8,14 +8,7 @@ the existing ones with a timestamp to track progress.
 ## Feedback History
 ### [8/30/2025] Phase 0 Feedback
 - **Strengths:**
-- Provided guide was easy to follow
-- Great intoduction on how to navigate the environment
-- program functions as intended and highlighted in the assignment PDF
+
 - **Areas for Improvement:**
-- need to refersh my vi/vim skills
-- there were a few steps which did not explicitly say that the target needed to be reset.
-### [Previous Date] Phase Y Feedback
-- **Strengths:**
-- ...
-- **Areas for Improvement:**
-- ...
+
+
